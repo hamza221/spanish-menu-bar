@@ -1,0 +1,190 @@
+:root {
+  --bg: #ffffff;
+  --bg-alt: #f5f5f7;
+  --text: #1d1d1f;
+  --secondary: #6e6e73;
+  --accent: #0071e3;
+  --accent-hover: #0077ed;
+  --card: #ffffff;
+  --hairline: rgba(0, 0, 0, 0.08);
+  --nav: rgba(255, 255, 255, 0.72);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #000000;
+    --bg-alt: #101012;
+    --text: #f5f5f7;
+    --secondary: #a1a1a6;
+    --accent: #2997ff;
+    --accent-hover: #47a6ff;
+    --card: #1c1c1e;
+    --hairline: rgba(255, 255, 255, 0.12);
+    --nav: rgba(22, 22, 23, 0.72);
+  }
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 17px;
+  line-height: 1.47;
+  letter-spacing: -0.022em;
+  -webkit-font-smoothing: antialiased;
+}
+
+a { color: var(--accent); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+h1, h2, h3 {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
+  margin: 0;
+}
+
+/* Navigation: translucent bar like apple.com */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background: var(--nav);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid var(--hairline);
+}
+.nav-inner {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 0 22px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+}
+.brand { display: flex; align-items: center; gap: 8px; color: var(--text); font-weight: 600; }
+.brand:hover { text-decoration: none; }
+.nav-links { display: flex; gap: 24px; }
+.nav-links a { color: var(--text); opacity: 0.8; }
+.nav-links a:hover { opacity: 1; text-decoration: none; }
+
+/* Hero */
+.hero {
+  text-align: center;
+  padding: 88px 22px 56px;
+  max-width: 980px;
+  margin: 0 auto;
+}
+.hero-icon { filter: drop-shadow(0 18px 30px rgba(0, 0, 0, 0.18)); }
+.eyebrow { color: #e5532d; font-weight: 600; font-size: 21px; margin: 24px 0 4px; }
+.hero h1 {
+  font-size: clamp(44px, 7vw, 80px);
+  line-height: 1.05;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+.lead {
+  font-size: clamp(19px, 2.4vw, 24px);
+  color: var(--secondary);
+  max-width: 640px;
+  margin: 20px auto 0;
+  line-height: 1.35;
+}
+.cta { display: flex; gap: 28px; justify-content: center; align-items: center; margin-top: 32px; flex-wrap: wrap; }
+.button {
+  font-size: 17px;
+  border-radius: 980px;
+  padding: 12px 24px;
+}
+.button.primary { background: var(--accent); color: #fff; }
+.button.primary:hover { background: var(--accent-hover); text-decoration: none; }
+.button.link { padding: 12px 0; }
+.fineprint { color: var(--secondary); font-size: 14px; margin-top: 20px; }
+
+.showcase { padding: 0 22px 96px; }
+/* Real screenshots on the same blue wallpaper they were captured on.
+   The word sits at ~11% of menubar.png; the popover arrow is at 50% of popover-*.png.
+   Strip at 75% width, right-aligned → word at 25% + 0.75 × 11% ≈ 33%; popover 42% wide → left margin 12%. */
+.desktop {
+  max-width: 980px;
+  margin: 0 auto;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #2677ad;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.25);
+  padding-bottom: 40px;
+}
+.menubar-shot { display: block; width: 75%; margin-left: 25%; }
+.popover-shot { display: block; width: 42%; margin: -1% 0 0 12%; }
+
+/* Features */
+.features { background: var(--bg-alt); padding: 96px 22px; }
+.features h2, .download h2 {
+  text-align: center;
+  font-size: clamp(32px, 5vw, 48px);
+  line-height: 1.08;
+  font-weight: 700;
+}
+.grid {
+  max-width: 980px;
+  margin: 56px auto 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+.card {
+  background: var(--card);
+  border-radius: 18px;
+  padding: 32px 28px;
+}
+.symbol {
+  font-size: 28px;
+  font-weight: 600;
+  color: #e5532d;
+  height: 36px;
+  margin-bottom: 12px;
+}
+.card h3 { font-size: 21px; font-weight: 600; margin-bottom: 8px; }
+.card p { color: var(--secondary); margin: 0; }
+kbd {
+  font-family: inherit;
+  font-size: 0.85em;
+  border: 1px solid var(--hairline);
+  border-bottom-width: 2px;
+  border-radius: 6px;
+  padding: 1px 6px;
+}
+
+/* Download */
+.download { text-align: center; padding: 96px 22px; }
+.download p { color: var(--secondary); }
+.download img { filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.15)); margin-bottom: 16px; }
+
+.footer {
+  border-top: 1px solid var(--hairline);
+  background: var(--bg-alt);
+  color: var(--secondary);
+  font-size: 12px;
+  text-align: center;
+  padding: 24px 22px 40px;
+}
+.footer p { margin: 6px 0; }
+
+/* Text pages (privacy policy) */
+.prose { max-width: 692px; margin: 0 auto; padding: 72px 22px 96px; }
+.prose h1 { font-size: 48px; line-height: 1.08; font-weight: 700; }
+.prose h2 { font-size: 24px; font-weight: 600; margin-top: 40px; }
+.prose p { color: var(--secondary); }
+.prose code { font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: 0.85em; overflow-wrap: anywhere; }
+
+@media (max-width: 600px) {
+  .nav-links { gap: 16px; }
+  /* Zoom in: word at 0.11 × 200% + 28% ≈ 50%, popover centred under it. */
+  .menubar-shot { width: 200%; max-width: none; margin-left: 28%; }
+  .popover-shot { width: 84%; margin-left: 8%; }
+}

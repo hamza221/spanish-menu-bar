@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Spanish Menu Bar — one Spanish word, every 30 minutes</title>
+  <meta name="description" content="A free, open-source macOS menu bar app that shows a new Spanish word every 30 minutes. Click it for the English definition.">
+  <meta name="color-scheme" content="light dark">
+  <meta property="og:title" content="Spanish Menu Bar">
+  <meta property="og:description" content="One Spanish word in your Mac menu bar, every 30 minutes.">
+  <meta property="og:image" content="assets/icon.png">
+  <link rel="icon" href="assets/favicon.png">
+  <link rel="apple-touch-icon" href="assets/icon.png">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav class="nav">
+    <div class="nav-inner">
+      <a class="brand" href="#"><img src="assets/favicon.png" alt="" width="22" height="22">Spanish Menu Bar</a>
+      <div class="nav-links">
+        <a href="#features">Features</a>
+        <a href="#download">Download</a>
+        <a href="https://github.com/hamza221/spanish-menu-bar">GitHub</a>
+      </div>
+    </div>
+  </nav>
+
+  <header class="hero">
+    <img class="hero-icon" src="assets/icon.png" alt="Spanish Menu Bar app icon" width="160" height="160">
+    <p class="eyebrow">For macOS</p>
+    <h1>One Spanish word.<br>Every 30 minutes.</h1>
+    <p class="lead">A tiny menu bar app that teaches you vocabulary while you work. Click the word to see what it means and hear how it sounds.</p>
+    <div class="cta">
+      <a class="button primary" href="https://github.com/hamza221/spanish-menu-bar/releases/latest">Download for Mac</a>
+      <a class="button link" href="https://github.com/hamza221/spanish-menu-bar">View source&nbsp;›</a>
+    </div>
+    <p class="fineprint">Free and open source · macOS 13 Ventura or later · Apple silicon and Intel</p>
+  </header>
+
+  <section class="showcase" aria-label="Screenshots">
+    <div class="desktop">
+      <img class="menubar-shot" src="assets/menubar.png" alt="The menu bar showing the Spanish word “madrugada”">
+      <picture>
+        <source srcset="assets/popover-dark.png" media="(prefers-color-scheme: dark)">
+        <img class="popover-shot" src="assets/popover-light.png" alt="Popover showing “madrugada” with its English definitions, the last time it was seen, and a Next button">
+      </picture>
+    </div>
+  </section>
+
+  <section id="features" class="features">
+    <h2>Small app. Quietly effective.</h2>
+    <div class="grid">
+      <article class="card">
+        <div class="symbol" aria-hidden="true">⇄</div>
+        <h3>Shuffled, never repeated</h3>
+        <p>All 29,743 words come in a random order, and every word appears once before any word appears again. Press <kbd>Next</kbd> whenever you want another.</p>
+      </article>
+      <article class="card">
+        <div class="symbol" aria-hidden="true">◉</div>
+        <h3>Only counts when you’re there</h3>
+        <p>A word counts as seen only if your Mac was awake and unlocked and you moved the mouse while it was showing. If you were away, the word stays put.</p>
+      </article>
+      <article class="card">
+        <div class="symbol" aria-hidden="true">◷</div>
+        <h3>Remembers what you’ve seen</h3>
+        <p>Open a word you’ve met before to see when: <em>Last time seen 15th of September 2026</em>.</p>
+      </article>
+      <article class="card">
+        <div class="symbol" aria-hidden="true">♪</div>
+        <h3>Hear it spoken</h3>
+        <p>Click the speaker or press <kbd>⌘P</kbd> to hear the word in a natural Spanish voice built into macOS.</p>
+      </article>
+      <article class="card">
+        <div class="symbol" aria-hidden="true">⌂</div>
+        <h3>Private by design</h3>
+        <p>Runs entirely offline in the App Sandbox. No accounts, no analytics, no network access.</p>
+      </article>
+      <article class="card">
+        <div class="symbol" aria-hidden="true">{ }</div>
+        <h3>Open source</h3>
+        <p>MIT licensed, written in Swift and SwiftUI. Read it, fork it, improve it.</p>
+      </article>
+    </div>
+  </section>
+
+  <section id="download" class="download">
+    <img src="assets/icon.png" alt="" width="96" height="96">
+    <h2>Get Spanish Menu Bar</h2>
+    <p>Signed and notarized by Apple. Open the DMG and drag the app to Applications.</p>
+    <div class="cta">
+      <a class="button primary" href="https://github.com/hamza221/spanish-menu-bar/releases/latest">Download DMG</a>
+    </div>
+    <p class="fineprint">Coming soon to the Mac App Store.</p>
+  </section>
+
+  <footer class="footer">
+    <p>Dictionary data from <a href="https://github.com/mananoreboton/en-es-en-Dic/blob/master/src/main/resources/dic/es-en.xml">mananoreboton/en-es-en-Dic</a>, licensed under Apache 2.0.</p>
+    <p>Spanish Menu Bar is open source under the <a href="https://github.com/hamza221/spanish-menu-bar/blob/main/LICENSE">MIT License</a>. <a href="privacy.html">Privacy Policy</a>. Not affiliated with Apple Inc.</p>
+  </footer>
+</body>
+</html>
