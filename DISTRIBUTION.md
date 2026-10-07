@@ -32,15 +32,16 @@ Both need a paid Apple Developer Program membership. Your **Team ID** is shown a
 
 ## Free DMG
 
-1. **Store notarization credentials** once. Create an app-specific password at <https://account.apple.com> →
-   Sign-In and Security → App-Specific Passwords, then run:
+1. **Store notarization credentials** once, using an App Store Connect API key (Users and Access →
+   Integrations → Team Keys, role *Developer*; the `.p8` downloads only once). No app-specific password or 2FA
+   is needed:
    ```sh
    xcrun notarytool store-credentials spanish-menu-bar \
-     --apple-id you@example.com --team-id TEAMID --password abcd-efgh-ijkl-mnop
+     --key AuthKey_KEYID.p8 --key-id KEYID --issuer ISSUER-UUID
    ```
 2. **Build, sign, notarize and staple:**
    ```sh
-   DEVELOPER_ID="Developer ID Application: Hamza Mahjoubi (TEAMID)" \
+   DEVELOPER_ID="Developer ID Application: hamza mahjoubi (TEAMID)" \
    NOTARY_PROFILE=spanish-menu-bar VERSION=1.0.0 scripts/make-dmg.sh
    ```
    The script ends with `spctl --assess`, which must report `accepted  source=Notarized Developer ID`.
@@ -62,19 +63,28 @@ other Macs.
    be unique on the store; have a fallback ready), your bundle ID, and any SKU (e.g. `spanish-menu-bar`).
 3. **Build the package.** `BUILD_NUMBER` must go up with every upload, even for the same `VERSION`.
    ```sh
-   APP_IDENTITY="Apple Distribution: Hamza Mahjoubi (TEAMID)" \
-   INSTALLER_IDENTITY="3rd Party Mac Developer Installer: Hamza Mahjoubi (TEAMID)" \
-   TEAM_ID=TEAMID PROFILE=~/Downloads/Spanish_Menu_Bar_MAS.provisionprofile \
+   APP_IDENTITY="Apple Distribution: hamza mahjoubi (TEAMID)" \
+   INSTALLER_IDENTITY="3rd Party Mac Developer Installer: hamza mahjoubi (TEAMID)" \
+   TEAM_ID=TEAMID PROFILE=path/to/Spanish_Menu_Bar_Mac_App_Store.provisionprofile \
    VERSION=1.0.0 BUILD_NUMBER=1 scripts/make-appstore-pkg.sh
    ```
-4. **Upload.** Open **Transporter** (free on the Mac App Store), sign in, drag in the `.pkg` and click Deliver. After
-   processing (usually minutes), the build appears under the app's TestFlight tab. Test it there before you submit.
-5. **Store listing** (App Store Connect → your app → macOS App):
-   - **Screenshots:** at least one, 16:10, at 1280×800, 1440×900, 2560×1600 or 2880×1800. Take full-screen
-     captures (⌘⇧3) with the popover open on a clean desktop.
+4. **Upload** with the same API key. `altool` ships with Xcode and finds the key in
+   `~/.appstoreconnect/private_keys/AuthKey_KEYID.p8`:
+   ```sh
+   export DEVELOPER_DIR=/Applications/Xcode.app/Contents/Developer
+   xcrun altool --validate-app -f build/SpanishMenuBar-AppStore-1.0.0.pkg -t macos --apiKey KEYID --apiIssuer ISSUER-UUID
+   xcrun altool --upload-app   -f build/SpanishMenuBar-AppStore-1.0.0.pkg -t macos --apiKey KEYID --apiIssuer ISSUER-UUID
+   ```
+   Transporter works too. After processing (usually minutes), the build appears under the app's TestFlight tab.
+5. **Store listing** (App Store Connect → your app → macOS App). The App Store version name must match
+   `VERSION` (e.g. `1.0.0`).
+   - **Screenshots:** `Packaging/AppStore/*.png` (1440×900, made from real captures of the app).
    - **Privacy Policy URL:** `https://hamza221.github.io/spanish-menu-bar/privacy.html`.
    - **App Privacy:** *Data Not Collected*.
-   - **Category:** Education (already set via `LSApplicationCategoryType`). **Price:** Free.
+   - **Category:** Education (already set via `LSApplicationCategoryType`).
+   - **Price:** USD 9.00 base price, other storefronts set by Apple. Paid apps need the *Paid Applications
+     Agreement* active (Business → Agreements, plus bank account and tax forms). The GitHub DMG stays free.
+   - **Age rating:** the dictionary includes vulgar words, so answer *Profanity or Crude Humor: Infrequent/Mild*.
    - **Support URL:** `https://github.com/hamza221/spanish-menu-bar/issues`.
    - **Encryption:** `ITSAppUsesNonExemptEncryption = NO` is in Info.plist, so there's no export compliance prompt.
    - **Review notes:** "Menu bar–only app (no Dock icon, no windows). After launch, a Spanish word appears in the

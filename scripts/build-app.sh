@@ -35,6 +35,10 @@ plutil -lint "$APP/Contents/Info.plist" >/dev/null
 if [[ -n "${PROFILE:-}" ]]; then
     cp "$PROFILE" "$APP/Contents/embedded.provisionprofile"
 fi
+# Installed apps are owned by root; every file must stay world-readable (App Store error 90255).
+chmod -R u+rwX,go+rX,go-w "$APP"
+# Downloaded inputs (e.g. the provisioning profile) carry com.apple.quarantine, which the App Store rejects (ITMS-91109).
+xattr -cr "$APP"
 
 # Real identities need a secure timestamp (notarization); ad-hoc signatures can't have one.
 TIMESTAMP="--timestamp"
