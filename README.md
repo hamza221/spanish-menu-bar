@@ -63,12 +63,35 @@ Regenerate the app icon with `swift scripts/make-icon.swift && iconutil -c icns 
 | `Sources/SpanishMenuBar/Presence.swift` | "Is someone actually looking?" (awake, unlocked, mouse moved) |
 | `Sources/SpanishMenuBar/WordView.swift` | SwiftUI popover and text-to-speech |
 | `Sources/SpanishMenuBar/App.swift` | Status item, popover, 10-second tick |
-| `scripts/` | `.app`, DMG and Mac App Store packaging |
+| `scripts/` | `.app`, DMG and Mac App Store packaging, CI signing setup |
+| `fastlane/` | App Store upload + submission lane, "What's New" text |
+| `.github/workflows/release.yml` | Release pipeline |
+| `Packaging/AppStore/` | App Store screenshots |
 | `docs/` | Website (GitHub Pages) |
 
 ## Releasing
 
-See [DISTRIBUTION.md](DISTRIBUTION.md) for the notarized DMG and the Mac App Store.
+Releases are automatic. Bump [`VERSION`](VERSION), update
+[`fastlane/metadata/en-US/release_notes.txt`](fastlane/metadata/en-US/release_notes.txt) (the App Store's "What's
+New"), and merge to `main`. The [Release workflow](.github/workflows/release.yml) then:
+
+- builds, signs, notarizes and staples `SpanishMenuBar-<version>.dmg` and publishes it as GitHub release `v<version>`;
+- builds the Mac App Store package, uploads it and submits it for review; it's released automatically once Apple
+  approves it.
+
+Merges that don't change `VERSION` don't release anything. Run the workflow manually (*Actions → Release → Run
+workflow*) for a dry run that signs, notarizes and validates without publishing.
+
+The workflow needs these repository secrets:
+
+| Secret | Content |
+| --- | --- |
+| `SIGNING_P12_BASE64` / `SIGNING_P12_PASSWORD` | Private key + Developer ID Application, Apple Distribution and 3rd Party Mac Developer Installer certificates (with intermediates) |
+| `ASC_KEY_ID` / `ASC_ISSUER_ID` / `ASC_KEY_P8_BASE64` | App Store Connect API key with the App Manager role (notarization, upload, submission) |
+| `MAS_PROFILE_BASE64` | Mac App Store provisioning profile for `com.hamzamahjoubi.SpanishMenuBar` |
+
+For a local build, `scripts/make-dmg.sh` and `scripts/make-appstore-pkg.sh` take the same inputs as environment
+variables (see the comments at the top of each script).
 
 ## License
 

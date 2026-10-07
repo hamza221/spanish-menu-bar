@@ -6,7 +6,7 @@
 #   ENTITLEMENTS    entitlements plist; default Packaging/SpanishMenuBar.entitlements
 #   PROFILE         provisioning profile to embed (Mac App Store builds)
 #   BUNDLE_ID       default com.hamzamahjoubi.SpanishMenuBar
-#   VERSION         marketing version; default 1.0.0
+#   VERSION         marketing version; default: contents of ./VERSION
 #   BUILD_NUMBER    must increase for every App Store upload; default: git commit count
 set -euo pipefail
 cd "$(dirname "$0")/.."
@@ -14,7 +14,7 @@ cd "$(dirname "$0")/.."
 SIGN_IDENTITY="${SIGN_IDENTITY:--}"
 ENTITLEMENTS="${ENTITLEMENTS:-Packaging/SpanishMenuBar.entitlements}"
 BUNDLE_ID="${BUNDLE_ID:-com.hamzamahjoubi.SpanishMenuBar}"
-VERSION="${VERSION:-1.0.0}"
+VERSION="${VERSION:-$(cat VERSION)}"
 BUILD_NUMBER="${BUILD_NUMBER:-$(git rev-list --count HEAD 2>/dev/null || echo 1)}"
 
 APP="build/Spanish Menu Bar.app"

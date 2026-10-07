@@ -1,0 +1,35 @@
+default_platform(:mac)
+
+platform :mac do
+  # Uploads build/SpanishMenuBar-AppStore-<VERSION>.pkg, creates/updates App Store version VERSION,
+  # waits for processing, attaches the build and submits it for review (released automatically when approved).
+  # Only "What's New" (metadata/en-US/release_notes.txt) is uploaded; the rest of the listing is managed in
+  # App Store Connect.
+  desc "Upload the Mac App Store package and submit it for review"
+  lane :submit do
+    version = ENV.fetch("VERSION")
+    api_key = app_store_connect_api_key(
+      key_id: ENV.fetch("ASC_KEY_ID"),
+      issuer_id: ENV.fetch("ASC_ISSUER_ID"),
+      key_content: ENV.fetch("ASC_KEY_P8_BASE64"),
+      is_key_content_base64: true
+    )
+    deliver(
+      api_key: api_key,
+      app_identifier: "com.hamzamahjoubi.SpanishMenuBar",
+      platform: "osx",
+      pkg: File.expand_path("../build/SpanishMenuBar-AppStore-#{version}.pkg", __dir__),
+      app_version: version,
+      metadata_path: File.expand_path("metadata", __dir__),
+      skip_screenshots: true,
+      force: true,
+      run_precheck_before_submit: false,
+      submit_for_review: true,
+      automatic_release: true,
+      submission_information: {
+        export_compliance_uses_encryption: false,
+        add_id_info_uses_idfa: false
+      }
+    )
+  end
+end

@@ -1,0 +1,123 @@
+name: Release
+
+# On every merge to main: if VERSION has no tag yet, build a notarized DMG and publish it as GitHub release
+# v<VERSION>, and upload the Mac App Store package and submit it for review.
+# Manual runs default to a dry run: sign + notarize the DMG and validate the App Store package without publishing.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Build, sign, notarize and validate only (no GitHub release, no App Store upload)"
+        type: boolean
+        default: true
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+env:
+  TEAM_ID: 5L5C5L86RV
+  DEVELOPER_ID: "Developer ID Application: hamza mahjoubi (5L5C5L86RV)"
+  APP_IDENTITY: "Apple Distribution: hamza mahjoubi (5L5C5L86RV)"
+  INSTALLER_IDENTITY: "3rd Party Mac Developer Installer: hamza mahjoubi (5L5C5L86RV)"
+
+jobs:
+  plan:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.plan.outputs.version }}
+      release: ${{ steps.plan.outputs.release }}
+      dry_run: ${{ steps.plan.outputs.dry_run }}
+    steps:
+      - uses: actions/checkout@v5
+      - id: plan
+        env:
+          DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run }}
+        run: |
+          version="$(tr -d '[:space:]' < VERSION)"
+          dry_run="${DRY_RUN:-false}"
+          if [[ "$dry_run" == "true" ]]; then
+            release=true
+          elif git ls-remote --exit-code --tags origin "refs/tags/v$version" >/dev/null; then
+            echo "::notice::v$version is already released; bump VERSION to release."
+            release=false
+          else
+            release=true
+          fi
+          {
+            echo "version=$version"
+            echo "release=$release"
+            echo "dry_run=$dry_run"
+          } >> "$GITHUB_OUTPUT"
+
+  dmg:
+    needs: plan
+    if: needs.plan.outputs.release == 'true'
+    runs-on: macos-15
+    env:
+      VERSION: ${{ needs.plan.outputs.version }}
+      BUILD_NUMBER: ${{ github.run_number }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Set up signing
+        env:
+          SIGNING_P12_BASE64: ${{ secrets.SIGNING_P12_BASE64 }}
+          SIGNING_P12_PASSWORD: ${{ secrets.SIGNING_P12_PASSWORD }}
+          ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+          ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+          ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
+        run: scripts/ci-setup-signing.sh
+      - name: Build, sign, notarize and staple DMG
+        env:
+          NOTARY_PROFILE: spanish-menu-bar
+        run: scripts/make-dmg.sh
+      - uses: actions/upload-artifact@v4
+        with:
+          name: SpanishMenuBar-${{ env.VERSION }}.dmg
+          path: build/SpanishMenuBar-${{ env.VERSION }}.dmg
+      - name: Publish GitHub release
+        if: needs.plan.outputs.dry_run != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "v$VERSION" "build/SpanishMenuBar-$VERSION.dmg" \
+            --title "Spanish Menu Bar $VERSION" --generate-notes --target "$GITHUB_SHA"
+
+  appstore:
+    needs: plan
+    if: needs.plan.outputs.release == 'true'
+    runs-on: macos-15
+    env:
+      VERSION: ${{ needs.plan.outputs.version }}
+      # Builds 1–2 were uploaded by hand; keep CI build numbers above them.
+      BUILD_NUMBER: ${{ github.run_number }}0
+      ASC_KEY_ID: ${{ secrets.ASC_KEY_ID }}
+      ASC_ISSUER_ID: ${{ secrets.ASC_ISSUER_ID }}
+      ASC_KEY_P8_BASE64: ${{ secrets.ASC_KEY_P8_BASE64 }}
+    steps:
+      - uses: actions/checkout@v5
+      - name: Set up signing
+        env:
+          SIGNING_P12_BASE64: ${{ secrets.SIGNING_P12_BASE64 }}
+          SIGNING_P12_PASSWORD: ${{ secrets.SIGNING_P12_PASSWORD }}
+          MAS_PROFILE_BASE64: ${{ secrets.MAS_PROFILE_BASE64 }}
+        run: scripts/ci-setup-signing.sh
+      - name: Build App Store package
+        run: scripts/make-appstore-pkg.sh
+      - name: Validate package
+        run: |
+          xcrun altool --validate-app -f "build/SpanishMenuBar-AppStore-$VERSION.pkg" -t macos \
+            --apiKey "$ASC_KEY_ID" --apiIssuer "$ASC_ISSUER_ID"
+      - uses: ruby/setup-ruby@v1
+        if: needs.plan.outputs.dry_run != 'true'
+        with:
+          ruby-version: "3.3"
+          bundler-cache: true
+      - name: Upload and submit for review
+        if: needs.plan.outputs.dry_run != 'true'
+        run: bundle exec fastlane mac submit

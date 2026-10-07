@@ -13,7 +13,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 : "${APP_IDENTITY:?}" "${INSTALLER_IDENTITY:?}" "${TEAM_ID:?}" "${PROFILE:?}" "${BUILD_NUMBER:?}"
-VERSION="${VERSION:-1.0.0}"
+VERSION="${VERSION:-$(cat VERSION)}"
 BUNDLE_ID="${BUNDLE_ID:-com.hamzamahjoubi.SpanishMenuBar}"
 export VERSION BUNDLE_ID BUILD_NUMBER PROFILE
 
