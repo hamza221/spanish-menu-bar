@@ -3,8 +3,9 @@ import PackageDescription
 
 let package = Package(
     name: "SpanishMenuBar",
-    platforms: [.macOS(.v13)],
+    platforms: [.macOS(.v13), .iOS(.v17)],
     products: [
+        .library(name: "SpanishMenuBarCore", targets: ["SpanishMenuBarCore"]),
         .executable(name: "SpanishMenuBar", targets: ["SpanishMenuBar"]),
     ],
     targets: [

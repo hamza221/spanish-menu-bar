@@ -52,6 +52,14 @@ scripts/build-app.sh             # universal, sandboxed build/Spanish Menu Bar.a
 open "build/Spanish Menu Bar.app"
 ```
 
+Build and launch the iOS app and widget:
+
+```sh
+cd iOS
+xcodegen generate
+open SpanishWord.xcodeproj
+```
+
 Regenerate the app icon with `swift scripts/make-icon.swift && iconutil -c icns Packaging/AppIcon.iconset -o Packaging/AppIcon.icns && rm -r Packaging/AppIcon.iconset`.
 
 ### Project layout
@@ -63,6 +71,9 @@ Regenerate the app icon with `swift scripts/make-icon.swift && iconutil -c icns 
 | `Sources/SpanishMenuBar/Presence.swift` | "Is someone actually looking?" (awake, unlocked, mouse moved) |
 | `Sources/SpanishMenuBar/WordView.swift` | SwiftUI popover and text-to-speech |
 | `Sources/SpanishMenuBar/App.swift` | Status item, popover, 10-second tick |
+| `iOS/SpanishWord/` | iOS host app with definitions, pronunciation and seen-word history |
+| `iOS/SpanishWordWidget/` | Home Screen and Lock Screen WidgetKit extension |
+| `iOS/Shared/WordSchedule.swift` | Shared 30-minute schedule and App Group persistence |
 | `scripts/` | `.app`, DMG and Mac App Store packaging, CI signing setup |
 | `fastlane/` | App Store upload + submission lane, "What's New" text |
 | `.github/workflows/release.yml` | Release pipeline |
